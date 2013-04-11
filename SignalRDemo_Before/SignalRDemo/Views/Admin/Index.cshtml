@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>WELCOME TO DA BACKOFFICE</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+			<h1>Welcome to da backoffice</h1>
+			<hgroup data-bind="visible: orders().length === 0">
+				<h2>There are no orders</h2>
+                <hr/>
+                <h1>:(</h1>
+			</hgroup>
+            <h2 data-bind="visible: orders().length > 0">Here are currently placed orders</h2>
+        </div>
+		<div class="row-fluid">
+			<table data-bind="visible: orders().length > 0" class="table table-hover table-bordered table-striped">
+				<thead>
+					<tr>
+						<td>Order id</td>
+						<td>Customer</td>
+						<td>Total quantity</td>
+                        <td>Order date</td>
+						<td>Rows</td>
+						<td>Order value</td>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: orders">
+					<tr>
+						<td data-bind="text: id"></td>
+						<td data-bind="text: customerId"></td>
+						<td data-bind="text: totalQuantity"></td>
+                        <td data-bind="text: formatDate()"></td>
+						<td data-bind="text: formatRows()"></td>
+                        <td data-bind="currency: totalAmount"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+    </div>
+    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+    <script src="~/Scripts/knockout-2.2.1.js"></script>
+	<script src="~/Scripts/toastr.min.js"></script>
+	<script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/knockout.helpers.js"></script>
+    <script>
+
+        (function (app) {
+            
+            app.ViewModel = function () {
+
+                var orders = ko.observableArray([]);
+
+                function init() {
+                    app.DataService.getOrders(orders);
+                }
+
+                var viewModel = {
+                    orders: orders
+                };
+
+                init();
+
+                return viewModel;
+            };
+
+            app.Order = function (dto) {
+                var self = this;
+                self.id = dto.id;
+                self.customerId = dto.customerId;
+                self.totalQuantity = dto.totalQuantity;
+                self.totalAmount = dto.totalAmount;
+                self.orderDate = dto.orderDate;
+                self.rows = ko.observableArray([]);
+                self.formatRows = function() {
+                    var titles = $.map(self.rows(), function(r) {
+                        return r.title();
+                    });
+
+                    return titles.join(", ");
+                };
+                self.formatDate = function() {
+                    return moment(self.orderDate).format('LLL');
+                };
+
+                var order = {
+                    rows: self.rows,
+                    totalQuantity: self.totalQuantity,
+                    formatRows: self.formatRows,
+                    totalAmount: self.totalAmount,
+                    formatDate: self.formatDate,
+                    id: self.id,
+                    customerId: self.customerId
+                };
+
+                return order;
+            };
+
+            app.OrderRow = function (dto) {
+                return mapToObservable(dto);
+            };
+
+            app.DataService = (function () {
+
+                var getOrders = function (ordersObservable) {
+                    return $.getJSON('api/order').then(function (data) {
+                        var orders = [];
+                        $.each(data, function (i, o) {
+                            var order = new app.Order(o);
+                            var rows = [];
+                            $.each(o.rows, function(i, r) {
+                                rows.push(new app.OrderRow(r));
+                            });
+                            order.rows(rows);
+                            orders.push(order);
+                        });
+
+                        ordersObservable(orders);
+                    });
+                };
+
+                var dataservice = {
+                  getOrders: getOrders  
+                };
+
+                return dataservice;
+            })();
+
+            jQuery(function ($) {
+
+                var vm = new app.ViewModel();
+                
+                ko.applyBindings(vm);
+            });
+
+        })(App = {});
+
+    </script>
+</body>
+</html>
