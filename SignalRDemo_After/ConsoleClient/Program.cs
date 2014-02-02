@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.AspNet.SignalR.Client.Hubs;
+using Microsoft.AspNet.SignalR.Client;
 
 namespace ConsoleClient
 {
@@ -7,7 +7,7 @@ namespace ConsoleClient
 	{
 		static void Main(string[] args)
 		{
-			var con = new HubConnection("http://localhost:50485/");
+			var con = new HubConnection("http://localhost/SignalRDemo");
 
 			var adminHub = con.CreateHubProxy("admin");
 

@@ -109,12 +109,12 @@
                 self.items = ko.observableArray([]);
                 self.addToCart = function (item) {
                     if (!item.quantity()) {
-                        toastr.info('There is no selected quantity :(');
+                        toastr.warning('There is no selected quantity :(');
                         return;
                     }
 
                     if (parseInt(item.quantity()) > item.available()) {
-                        toastr.info('The selected quantity is more than there is available :(');
+                        toastr.warning('The selected quantity is more than there is available :(');
                         return;
                     }
 

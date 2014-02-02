@@ -41,10 +41,8 @@ namespace SignalRDemo.Controllers
 			order.OrderDate = DateTime.Now;
 			order = _orderRepo.Add(order);
 
-			var uri = Url.Link("DefaultApi", new {id = order.Id});
-
 			var response = Request.CreateResponse(HttpStatusCode.Created, order);
-			response.Headers.Location = new Uri(uri);
+			response.Headers.Location = new Uri(Url.Link("DefaultApi", new {id = order.Id}));
 
 			return response;
 		}

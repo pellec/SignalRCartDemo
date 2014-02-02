@@ -10,17 +10,16 @@
 <head>
     <title>AWESOME!</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-	<link href="~/Content/bootstrap-responsive.min.css" rel="stylesheet" />
     <link href="~/Content/toastr.min.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row-fluid">
+    <div class="container">
+        <div class="row">
             <h1>Welcome to da shop!</h1>
             <h2>Here we only sell the finest movies ever produced</h2>
         </div>
-        <div class="row-fluid">
-            <div class="span5">
+        <div class="row">
+            <div class="col-md-8">
                 <h4>Currently in stock</h4>
                 <table class="table table-hover table-striped">
                     <thead>
@@ -47,7 +46,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="span3" data-bind="visible: cart.items().length > 0">
+            <div class="col-md-4" data-bind="visible: cart.items().length > 0">
                 <h4>Your shopping cart</h4>
                 <table class="table table-bordered" style="background-color: #bad455">
                     <thead>
@@ -78,10 +77,10 @@
             </div>
         </div>
     </div>
-    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
-	<script src="~/Scripts/knockout-2.2.1.js"></script>
+    <script src="~/Scripts/jquery-2.1.0.min.js"></script>
+	<script src="~/Scripts/knockout-3.0.0.js"></script>
 	<script src="~/Scripts/toastr.min.js"></script>
-	<script src="~/Scripts/jquery.signalR-1.0.1.min.js"></script>
+	<script src="~/Scripts/jquery.signalR-2.0.2.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/knockout.helpers.js"></script>
     <script>
@@ -111,6 +110,16 @@
                 self.customerId = ko.observable();
                 self.items = ko.observableArray([]);
                 self.addToCart = function (item) {
+                    if (!item.quantity()) {
+                        toastr.warning('There is no selected quantity :(');
+                        return;
+                    }
+
+                    if (parseInt(item.quantity()) > item.available()) {
+                        toastr.warning('The selected quantity is more than there is available :(');
+                        return;
+                    }
+
                     self.items.push(new app.CartItem(ko.toJS(item)));
                     item.quantity('');
                 };
@@ -207,14 +216,14 @@
 
                 hub.client.updateProductCount = function(product) {
                     var match = ko.utils.arrayFirst(vm.products(), function (p) {
-                        return p.id() == product.id;
+                        return p.id() === product.id;
                     });
 
                     toastr.info('Availability changed for product "' + product.title + '" to "' + product.available + '"');
                     match.available(product.available);
                 };
 
-                $.connection.hub.start(function() {
+                $.connection.hub.start().done(function () {
                     vm.cart.customerId($.connection.hub.id);
                 });
 

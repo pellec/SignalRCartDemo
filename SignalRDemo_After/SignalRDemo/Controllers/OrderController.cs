@@ -45,10 +45,8 @@ namespace SignalRDemo.Controllers
 
 			GlobalHost.ConnectionManager.GetHubContext<AdminHub>().Clients.All.orderReceived(order);
 
-			var uri = Url.Link("DefaultApi", new {id = order.Id});
-
 			var response = Request.CreateResponse(HttpStatusCode.Created, order);
-			response.Headers.Location = new Uri(uri);
+			response.Headers.Location = new Uri(Url.Link("DefaultApi", new {id = order.Id}));
 
 			return response;
 		}
