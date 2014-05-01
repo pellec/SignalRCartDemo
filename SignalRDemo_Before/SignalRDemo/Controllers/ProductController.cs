@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿using System.Web.Http;
 using SignalRDemo.Data;
 using SignalRDemo.Entities;
 
@@ -19,9 +17,9 @@ namespace SignalRDemo.Controllers
 		    _repo = repo;
 	    }
 
-		public HttpResponseMessage Get()
+		public IHttpActionResult Get()
 		{
-			return Request.CreateResponse(HttpStatusCode.OK, _repo.Get());
+			return Ok(_repo.Get());
 		}
     }
 }

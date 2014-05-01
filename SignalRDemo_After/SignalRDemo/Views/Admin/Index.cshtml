@@ -4,7 +4,8 @@
 <head>
     <title>DA BACKOFFICE</title>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-	<link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <link href="~/Content/styles.css" rel="stylesheet" />
 </head>
 <body>
 	<div class="container">
@@ -17,7 +18,7 @@
 			<h2 data-bind="visible: orders().length > 0">Here are currently placed orders</h2>
 		</div>
 		<div class="row">
-			<table data-bind="visible: orders().length > 0" class="table table-hover table-bordered table-striped">
+			<table data-bind="visible: orders().length > 0" class="table table-bordered">
 				<thead>
 					<tr>
 						<td>Order id</td>
@@ -29,7 +30,7 @@
 					</tr>
 				</thead>
 				<tbody data-bind="foreach: orders">
-					<tr>
+				    <tr data-bind="highlight: isNew, highlightClass: 'highlight'">
 						<td data-bind="text: id"></td>
 						<td data-bind="text: customerId"></td>
 						<td data-bind="text: totalQuantity"></td>
@@ -43,11 +44,11 @@
 	</div>
 
     <script src="~/Scripts/jquery-2.1.0.min.js"></script>
-    <script src="~/Scripts/knockout-3.0.0.js"></script>
+    <script src="~/Scripts/knockout-3.1.0.js"></script>
 	<script src="~/Scripts/toastr.min.js"></script>
 	<script src="~/Scripts/moment.min.js"></script>
     <script src="~/Scripts/knockout.helpers.js"></script>
-	<script src="~/Scripts/jquery.signalR-2.0.2.js"></script>
+	<script src="~/Scripts/jquery.signalR-2.0.3.js"></script>
     <script src="~/signalr/hubs"></script>
     <script>
 
@@ -78,6 +79,7 @@
             app.Order = function (dto) {
                 var self = this;
                 self.id = dto.id;
+                self.isNew = ko.observable(true);
                 self.customerId = dto.customerId;
                 self.totalQuantity = dto.totalQuantity;
                 self.totalAmount = dto.totalAmount;
@@ -101,7 +103,8 @@
                     totalAmount: self.totalAmount,
                     formatDate: self.formatDate,
                     id: self.id,
-                    customerId: self.customerId
+                    customerId: self.customerId,
+                    isNew: self.isNew
                 };
 
                 return order;

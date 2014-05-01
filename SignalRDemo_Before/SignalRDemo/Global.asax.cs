@@ -18,10 +18,11 @@ namespace SignalRDemo
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-			new InMemoryRepository<Product>().Add(new Product { Available = 10, Title = "Snuten i Hollywood I", ImageFilePath = "Content/images/snuten_i_hollywood_i.jpg", Price = 99m});
-			new InMemoryRepository<Product>().Add(new Product { Available = 30, Title = "Snuten i Hollywood II", ImageFilePath = "Content/images/snuten_i_hollywood_ii.jpg", Price = 199m });
-			new InMemoryRepository<Product>().Add(new Product { Available = 66, Title = "Snuten i Hollywood III", ImageFilePath = "Content/images/snuten_i_hollywood_iii.jpg", Price = 49m });
-			new InMemoryRepository<Product>().Add(new Product { Available = 78, Title = "Snuten i Hollywood IV", ImageFilePath = "Content/images/snuten_i_hollywood_iv.jpg", Price = 69m });
+			var repository = new InMemoryRepository<Product>();
+			repository.Add(new Product { Available = 10, Title = "Snuten i Hollywood I", ImageFilePath = "Content/images/snuten_i_hollywood_i.jpg", Price = 99m});
+			repository.Add(new Product { Available = 30, Title = "Snuten i Hollywood II", ImageFilePath = "Content/images/snuten_i_hollywood_ii.jpg", Price = 199m });
+			repository.Add(new Product { Available = 66, Title = "Snuten i Hollywood III", ImageFilePath = "Content/images/snuten_i_hollywood_iii.jpg", Price = 49m });
+			repository.Add(new Product { Available = 78, Title = "Snuten i Hollywood IV", ImageFilePath = "Content/images/snuten_i_hollywood_iv.jpg", Price = 69m });
 		}
 	}
 }

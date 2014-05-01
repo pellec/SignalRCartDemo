@@ -24,16 +24,16 @@ namespace SignalRDemo.Controllers
 			_productRepo = productRepo;
 		}
 
-		public HttpResponseMessage Get()
+		public IHttpActionResult Get()
 		{
-			return Request.CreateResponse(HttpStatusCode.OK, _orderRepo.Get().OrderByDescending(o => o.OrderDate));
+			return Ok(_orderRepo.Get().OrderByDescending(o => o.OrderDate));
 		}
 
-		public HttpResponseMessage Post(Order order)
+		public IHttpActionResult Post(Order order)
 		{
 			if(!ModelState.IsValid)
 			{
-				return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Not cool!");
+				return BadRequest("Not cool!");
 			}
 
 			UpdateAvailability(order);
@@ -41,10 +41,9 @@ namespace SignalRDemo.Controllers
 			order.OrderDate = DateTime.Now;
 			order = _orderRepo.Add(order);
 
-			var response = Request.CreateResponse(HttpStatusCode.Created, order);
-			response.Headers.Location = new Uri(Url.Link("DefaultApi", new {id = order.Id}));
+			var location = new Uri(Url.Link("DefaultApi", new {id = order.Id}));
 
-			return response;
+			return Created(location, order);
 		}
 
 		private void UpdateAvailability(Order order)
